@@ -348,3 +348,5 @@ MigrationBackup/
 
 # Ionide (cross platform F# VS Code tools) working folder
 .ionide/
+/I2C-Comunication/Master/__vm
+/I2C-Comunication/Slave/__vm
