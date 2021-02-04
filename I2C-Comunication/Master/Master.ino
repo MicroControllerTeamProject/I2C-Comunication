@@ -54,7 +54,7 @@ void loop()
 		Serial.print(c);         // print the character
 	}
 
-	return;
+
 
 	for (int i = 0; i < jsonString.length() + 1 ; i++)
 	{
