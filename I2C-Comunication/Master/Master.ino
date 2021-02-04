@@ -22,11 +22,17 @@
 StaticJsonDocument<200> doc;
 
 //char json[] = "{'sensor':'gps','time':1351824120,'data':[48.756080,2.302038]}";
-String sensorName = "kx01";
+String sensorMaxValue1 = "50.65";
+String sensorMaxValue2 = "12.11";
 
-String jsonString = "{'sensor':'" + sensorName + "'}";
+String jsonString = 
+	String("#") + 
+	"{'sensor01':" + sensorMaxValue1 + 
+	",'sensor02':" + sensorMaxValue2 + 
+	"}" 
+	+ ";";
 
-char json[50];
+char json[200];
 
 void setup()
 {
@@ -37,12 +43,26 @@ void setup()
 
 void loop()
 {
-	for (int i = 0; i < 20; i++)
+
+
+
+
+	Wire.requestFrom(4, 200); 
+	//
+	while (Wire.available()) { // slave may send less than requested
+		char c = Wire.read(); // receive a byte as character
+		Serial.print(c);         // print the character
+	}
+
+	return;
+
+	for (int i = 0; i < jsonString.length() + 1 ; i++)
 	{
 		Wire.beginTransmission(4); 
 		Wire.write(json[i]);  
 		Wire.endTransmission();   
 	}
+	Serial.println("Finito");
 	delay(1000);
 
 }

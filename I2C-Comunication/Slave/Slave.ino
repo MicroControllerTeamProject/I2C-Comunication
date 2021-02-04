@@ -21,34 +21,53 @@
 
 StaticJsonDocument<200> doc;
 
-char json[50];
+char json[200];
 int i = 0;
 
 void setup()
 {
-	
 	Wire.begin(4);                // join i2c bus with address #4
 	Wire.onReceive(receiveEvent); // register event
+	Wire.onRequest(requestEvent); // register event
 	Serial.begin(9600);           // start serial for output
 	Serial.println("Start");
-
-	
 }
 
 void loop()
 {
-	if (i > 19)
-	{
-		i = 0;
-		deser();
-	}
-	
+
 }
+bool initData = false;
 
 void receiveEvent(int howMany)
 {
-		json[i] = Wire.read();
-		i++;
+		char c = Wire.read();
+
+		if (c == ';')
+		{
+			deser();
+			initData = false;
+			i = 0;
+		}
+
+		if (initData)
+		{
+			//Serial.print(c);
+			json[i] = c;
+			i++;
+		}
+		
+		if (c == '#')
+		{
+			initData = true;
+		}
+		
+}
+
+void requestEvent() {
+	char f[] = "{'sensor01':10.67}";
+	Wire.write(f); 
+	// as expected by master
 }
 
 void deser()
@@ -60,9 +79,11 @@ void deser()
 		return;
 	}
 
-	String h = doc["sensor"];
-	Serial.println(h);
+	float h1 = doc["sensor01"];
+	float h2 = doc["sensor02"];
 
+	Serial.println(h1 + 0.2);
+	Serial.println(h2);
 }
 
 
