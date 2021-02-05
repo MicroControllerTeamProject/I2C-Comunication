@@ -49,30 +49,40 @@ void setup()
 
 	Wire.begin(); 
 	//sendDataAfterSave();
-	Serial.println("Start master activity");
+	
 }
 
 void loop(){
+	Serial.println("---------Start master activity");
+
 	requestData("getMenuDataBytes");
+
 	while (!deserializeMenuDataJson())
 	{
 		requestData("getMenuDataBytes");
 	}
-	Serial.println("Stop master activity");
-	delay(1000);
+
+	Serial.println("---------Stop master activity");
+	delay(5000);
 }
 
  void requestData(char* streamDataBytes)
 {
 	Wire.beginTransmission(4);
+
 	Wire.write(streamDataBytes);
+
 	Wire.endTransmission();
+
 	Wire.requestFrom(4, 4);
+
 	int numberOfBytes = Wire.read();
+
 	//Serial.print(numberOfBytes);
 	for (int i = 0; i < numberOfBytes; i++)
 	{
 		Wire.requestFrom(4, 1);
+
 		while (Wire.available()) { 
 			char c = Wire.read(); 
 			json[i] = c;
