@@ -112,7 +112,11 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="TransfertObject.h" />
     <ClInclude Include="__vm\.Slave.vsarduino.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TransfertObject.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

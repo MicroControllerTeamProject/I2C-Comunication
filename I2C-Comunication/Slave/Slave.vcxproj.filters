@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="library">
+      <UniqueIdentifier>{1c6d74be-8f69-4957-9d8a-b512dbcb5f7b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Slave.ino" />
@@ -21,5 +24,13 @@
     <ClInclude Include="__vm\.Slave.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TransfertObject.h">
+      <Filter>library</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TransfertObject.cpp">
+      <Filter>library</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="library">
+      <UniqueIdentifier>{04b22db0-e327-48d3-995e-75167a15c520}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Master.ino" />
@@ -21,5 +24,13 @@
     <ClInclude Include="__vm\.Master.vsarduino.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TransfertObject.h">
+      <Filter>library</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TransfertObject.cpp">
+      <Filter>library</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

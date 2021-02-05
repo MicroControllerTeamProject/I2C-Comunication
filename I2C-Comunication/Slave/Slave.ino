@@ -15,62 +15,142 @@
 
 // This example code is in the public domain.
 
-
 #include <Wire.h>
+
 #include <ArduinoJson.h>
+
+#include "TransfertObject.h"
 
 StaticJsonDocument<200> doc;
 
+TransfertObject transfertObject;
+
 char json[200];
+
 int i = 0;
 
-void setup()
+uint8_t index = 0;
+
+const int address = 4;
+
+char tot[200];
+
+
+bool isDataComingFromMaster = false;
+
+char commandFromMaster[21];
+
+void setup(){
+	Serial.begin(9600);           // start serial for output
+	initWire();
+	initTransfertObject();
+	Serial.println("Start slave activity");
+}
+
+void loop() {
+}
+
+void initWire()
 {
-	Wire.begin(4);                // join i2c bus with address #4
+	Wire.begin(address);                // join i2c bus with address #4
 	Wire.onReceive(receiveEvent); // register event
 	Wire.onRequest(requestEvent); // register event
-	Serial.begin(9600);           // start serial for output
-	Serial.println("Start");
 }
 
-void loop()
+
+
+void initTransfertObject()
 {
-
+	transfertObject.batteryVoltage = 3.25;
+	transfertObject.isBuzzerON = true;
+	transfertObject.isDataChanged = true;
 }
-bool initData = false;
+
+
 
 void receiveEvent(int howMany)
 {
-		char c = Wire.read();
-
-		if (c == ';')
-		{
-			deser();
-			initData = false;
-			i = 0;
-		}
-
-		if (initData)
-		{
-			//Serial.print(c);
-			json[i] = c;
+	if (howMany > 1)
+	{
+		int i = 0;
+		commandFromMaster[0] = '\0';
+		while (Wire.available()) { // slave may send less than requested
+			char c = Wire.read(); // receive a byte as character
+			commandFromMaster[i] = c;
 			i++;
 		}
-		
-		if (c == '#')
-		{
-			initData = true;
-		}
-		
+		return;
+	}
+	
+
+	char c = Wire.read();
+
+	if (c == ';')
+	{
+		deserializeJson();
+		isDataComingFromMaster = false;
+		i = 0;
+	}
+
+	if (isDataComingFromMaster)
+	{
+		//Serial.print(c);
+		json[i] = c;
+		i++;
+	}
+
+	if (c == '#')
+	{
+		isDataComingFromMaster = true;
+	}
+
 }
 
 void requestEvent() {
-	char f[] = "{'sensor01':10.67}";
-	Wire.write(f); 
-	// as expected by master
+	String parameter = (char*)commandFromMaster;
+
+	//return to master numbers of bytes
+	if (parameter == F("getMenuDataBytes"))
+	{
+		commandFromMaster[0] = '\0';
+		Serial.println("request menuDataBytes");
+		strcpy(commandFromMaster, "startMenuData");
+		Serial.println("start request menuData");
+		Wire.write(menuDataToSend().length());
+	}
+
+	if (parameter == F("startMenuData"))
+	{
+		sendMenuData(menuDataToSend());
+	}
 }
 
-void deser()
+String menuDataToSend()
+{
+	String value =  "{'isBuzzerON':" + String(transfertObject.isBuzzerON) + 
+					",'batteryVoltage':" + String(transfertObject.batteryVoltage) + 
+					",'isDataChanged':" + String(transfertObject.isDataChanged) +
+		
+	"}";
+	//Serial.println(h);
+	return value;
+}
+
+void sendMenuData(String dataToSend)
+{
+	dataToSend.toCharArray(tot, dataToSend.length() + 1);
+	//Serial.println(tot[index]);
+	Wire.write(tot[index]);
+	index = index + 1;
+	if (index > (dataToSend.length() - 1))
+	{
+		Serial.println("stop request menuData");
+		commandFromMaster[0] = '\0';
+		index = 0;
+	}
+}
+
+void deserializeJson()
 {
 	DeserializationError error = deserializeJson(doc, json);
 	if (error) {
