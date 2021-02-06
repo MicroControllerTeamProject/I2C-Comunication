@@ -27,46 +27,58 @@ TransfertObject transfertObject;
 
 uint8_t slaveAddress = 4;
 
-//char json[] = "{'sensor':'gps','time':1351824120,'data':[48.756080,2.302038]}";
-String sensorMaxValue1 = "50.65";
+String jsonStringToSend = "";
 
-String sensorMaxValue2 = "12.11";
-
-String jsonString = 
-	String("#") + 
-	"{'sensor01':" + sensorMaxValue1 + 
-	",'sensor02':" + sensorMaxValue2 + 
-	"}" 
-	+ ";";
-
-char json[200];
+char jsonArray[200];
 
 void setup()
 {
-	jsonString.toCharArray(json, jsonString.length() + 1);
-
 	Serial.begin(9600);
 
-	Wire.begin(); 
-	//sendDataAfterSave();
-	
+	Wire.begin();
 }
 
-void loop(){
+void initTransfertObject()
+{
+	transfertObject.isBuzzerON = false;
+	transfertObject.isDataChanged = true;
+}
+
+void  prepareDataToSend()
+{
+	jsonStringToSend = "#{'isBuzzerON':" + String(transfertObject.isBuzzerON) +
+		",'isDataChanged':" + String(transfertObject.isDataChanged) +
+		"};";
+	jsonStringToSend.toCharArray(jsonArray, jsonStringToSend.length() + 1);
+}
+
+void loop() {
+
 	Serial.println("---------Start master activity");
 
-	requestData("getMenuDataBytes");
+	requestDataFromSlave("getMenuDataBytes");
 
-	while (!deserializeMenuDataJson())
+	while (!deserializeIncomingDataWithJson())
 	{
-		requestData("getMenuDataBytes");
+		//If on error recall data!!!
+		requestDataFromSlave("getMenuDataBytes");
 	}
 
 	Serial.println("---------Stop master activity");
+
 	delay(5000);
+
+	initTransfertObject();
+
+	if (transfertObject.isDataChanged)
+	{
+		prepareDataToSend();
+
+		sendDataToSlave();
+	}
 }
 
- void requestData(char* streamDataBytes)
+void requestDataFromSlave(char* streamDataBytes)
 {
 	Wire.beginTransmission(4);
 
@@ -83,30 +95,30 @@ void loop(){
 	{
 		Wire.requestFrom(4, 1);
 
-		while (Wire.available()) { 
-			char c = Wire.read(); 
-			json[i] = c;
+		while (Wire.available()) {
+			char c = Wire.read();
+			jsonArray[i] = c;
 			Serial.print(c);
 		}
 	}
 	Serial.println();
 }
 
-void sendData()
+void sendDataToSlave()
 {
-	for (int i = 0; i < jsonString.length() + 1; i++)
+	for (int i = 0; i < jsonStringToSend.length() + 1; i++)
 	{
 		Wire.beginTransmission(4);
-		Wire.write(json[i]);
+		Wire.write(jsonArray[i]);
 		Wire.endTransmission();
 	}
 	Serial.println("Finito");
 	delay(1000);
 }
 
-bool deserializeMenuDataJson()
+bool deserializeIncomingDataWithJson()
 {
-	DeserializationError error = deserializeJson(doc, json);
+	DeserializationError error = deserializeJson(doc, jsonArray);
 	if (error) {
 		Serial.print(F("deserializeJson() failed: "));
 		Serial.println(error.f_str());
@@ -115,13 +127,10 @@ bool deserializeMenuDataJson()
 
 	transfertObject.isBuzzerON = doc["isBuzzerON"];
 	transfertObject.batteryVoltage = doc["batteryVoltage"];
-	transfertObject.isDataChanged = doc["isDataChanged"];
 
 	Serial.print("isBuzzerON : "); Serial.println(transfertObject.isBuzzerON);
 
 	Serial.print("batteryVoltage : "); Serial.println(transfertObject.batteryVoltage);
-
-	Serial.print("isDataChanged : "); Serial.println(transfertObject.isDataChanged);
 
 	return true;
 }

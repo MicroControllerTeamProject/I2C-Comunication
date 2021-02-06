@@ -33,8 +33,7 @@ uint8_t index = 0;
 
 const int address = 4;
 
-char tot[200];
-
+char dataArray[200];
 
 bool isDataComingFromMaster = false;
 
@@ -57,16 +56,11 @@ void initWire()
 	Wire.onRequest(requestEvent); // register event
 }
 
-
-
 void initTransfertObject()
 {
 	transfertObject.batteryVoltage = 3.25;
 	transfertObject.isBuzzerON = true;
-	transfertObject.isDataChanged = true;
 }
-
-
 
 void receiveEvent(int howMany)
 {
@@ -82,19 +76,19 @@ void receiveEvent(int howMany)
 		return;
 	}
 	
-
 	char c = Wire.read();
 
 	if (c == ';')
 	{
-		deserializeJson();
+		deserializeIncomingDataJson();
+
 		isDataComingFromMaster = false;
 		i = 0;
 	}
 
 	if (isDataComingFromMaster)
 	{
-		//Serial.print(c);
+		Serial.print(c);
 		json[i] = c;
 		i++;
 	}
@@ -116,31 +110,30 @@ void requestEvent() {
 		Serial.println("request menuDataBytes");
 		strcpy(commandFromMaster, "startMenuData");
 		Serial.println("start request menuData");
-		Wire.write(menuDataToSend().length());
+		Wire.write(prepareDataToSend().length());
 	}
 
 	if (parameter == F("startMenuData"))
 	{
-		sendMenuData(menuDataToSend());
+		sendDataToMaster(prepareDataToSend());
 	}
 }
 
-String menuDataToSend()
+String prepareDataToSend()
 {
 	String value =  "{'isBuzzerON':" + String(transfertObject.isBuzzerON) + 
 					",'batteryVoltage':" + String(transfertObject.batteryVoltage) + 
-					",'isDataChanged':" + String(transfertObject.isDataChanged) +
 		
 	"}";
 	//Serial.println(h);
 	return value;
 }
 
-void sendMenuData(String dataToSend)
+void sendDataToMaster(String dataToSend)
 {
-	dataToSend.toCharArray(tot, dataToSend.length() + 1);
+	dataToSend.toCharArray(dataArray, dataToSend.length() + 1);
 	//Serial.println(tot[index]);
-	Wire.write(tot[index]);
+	Wire.write(dataArray[index]);
 	index = index + 1;
 	if (index > (dataToSend.length() - 1))
 	{
@@ -150,7 +143,7 @@ void sendMenuData(String dataToSend)
 	}
 }
 
-void deserializeJson()
+void deserializeIncomingDataJson()
 {
 	DeserializationError error = deserializeJson(doc, json);
 	if (error) {
@@ -159,11 +152,16 @@ void deserializeJson()
 		return;
 	}
 
-	float h1 = doc["sensor01"];
-	float h2 = doc["sensor02"];
+	transfertObject.isBuzzerON = doc["isBuzzerON"];
+	transfertObject.isDataChanged = doc["isDataChanged"];
 
-	Serial.println(h1 + 0.2);
-	Serial.println(h2);
+	if (transfertObject.isDataChanged)
+	{
+		transfertObject.isBuzzerON = doc["isBuzzerON"];
+	}
+
+	Serial.println(transfertObject.isBuzzerON);
+	
 }
 
 
