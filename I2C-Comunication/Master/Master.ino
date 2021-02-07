@@ -49,7 +49,7 @@ void  prepareDataToSend()
 	jsonStringToSend = "#{'isBuzzerON':" + String(transfertObject.isBuzzerON) +
 		",'isDataChanged':" + String(transfertObject.isDataChanged) +
 		"};";
-	jsonStringToSend.toCharArray(jsonArray, jsonStringToSend.length() + 1);
+	//jsonStringToSend.toCharArray(jsonArray, jsonStringToSend.length() + 1);
 }
 
 void loop() {
@@ -109,7 +109,7 @@ void sendDataToSlave()
 	for (int i = 0; i < jsonStringToSend.length() + 1; i++)
 	{
 		Wire.beginTransmission(4);
-		Wire.write(jsonArray[i]);
+		Wire.write(jsonStringToSend[i]);
 		Wire.endTransmission();
 	}
 	Serial.println("Finito");

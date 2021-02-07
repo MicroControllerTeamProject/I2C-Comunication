@@ -33,7 +33,7 @@ uint8_t index = 0;
 
 const int address = 4;
 
-char dataArray[200];
+//char dataArray[200];
 
 bool isDataComingFromMaster = false;
 
@@ -131,9 +131,7 @@ String prepareDataToSend()
 
 void sendDataToMaster(String dataToSend)
 {
-	dataToSend.toCharArray(dataArray, dataToSend.length() + 1);
-	//Serial.println(tot[index]);
-	Wire.write(dataArray[index]);
+	Wire.write(dataToSend[index]);
 	index = index + 1;
 	if (index > (dataToSend.length() - 1))
 	{
