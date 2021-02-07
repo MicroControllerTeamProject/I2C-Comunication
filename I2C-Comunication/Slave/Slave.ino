@@ -58,9 +58,8 @@ void initWire()
 
 void initTransfertObject()
 {
-	transfertObject.batteryVoltage = 3.25;
-	transfertObject.isBuzzerON = true;
-	transfertObject.internalTemperature = 18.00;
+	transfertObject.batteryVoltage = 4.2;
+	transfertObject.isBuzzerON = false;
 }
 
 void receiveEvent(int howMany)
@@ -126,7 +125,6 @@ String prepareDataToSend()
 {
 	String value =  "{'isBuzzerON':" + String(transfertObject.isBuzzerON) + 
 					",'batteryVoltage':" + String(transfertObject.batteryVoltage) + 
-					",'internalTemperature':" + String(transfertObject.internalTemperature) +
 		
 	"}";
 	//Serial.println(h);
