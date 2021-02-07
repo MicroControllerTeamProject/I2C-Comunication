@@ -60,6 +60,7 @@ void initTransfertObject()
 {
 	transfertObject.batteryVoltage = 3.25;
 	transfertObject.isBuzzerON = true;
+	transfertObject.internalTemperature = 18.00;
 }
 
 void receiveEvent(int howMany)
@@ -67,12 +68,14 @@ void receiveEvent(int howMany)
 	if (howMany > 1)
 	{
 		int i = 0;
-		commandFromMaster[0] = '\0';
+		memset(commandFromMaster, 0, sizeof(commandFromMaster));
+		//commandFromMaster= '\0';
 		while (Wire.available()) { // slave may send less than requested
 			char c = Wire.read(); // receive a byte as character
 			commandFromMaster[i] = c;
 			i++;
 		}
+		Serial.println(commandFromMaster);
 		return;
 	}
 	
@@ -102,12 +105,12 @@ void receiveEvent(int howMany)
 
 void requestEvent() {
 	String parameter = (char*)commandFromMaster;
-
+	//Serial.println(parameter);
 	//return to master numbers of bytes
-	if (parameter == F("getMenuDataBytes"))
+	if (parameter.equals("getMenuData"))
 	{
-		commandFromMaster[0] = '\0';
-		Serial.println("request menuDataBytes");
+		memset(commandFromMaster, 0, sizeof(commandFromMaster));
+		Serial.println("request menuData");
 		strcpy(commandFromMaster, "startMenuData");
 		Serial.println("start request menuData");
 		Wire.write(prepareDataToSend().length());
@@ -123,6 +126,7 @@ String prepareDataToSend()
 {
 	String value =  "{'isBuzzerON':" + String(transfertObject.isBuzzerON) + 
 					",'batteryVoltage':" + String(transfertObject.batteryVoltage) + 
+					",'internalTemperature':" + String(transfertObject.internalTemperature) +
 		
 	"}";
 	//Serial.println(h);

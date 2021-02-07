@@ -9,12 +9,16 @@ public:
 	bool isSystemActivated;
 	float batteryVoltage;
 	bool isBuzzerON = 0;
-	bool _isExternalInterruptOn;
-	String _batteryLevelGraf;
-	float _internalTemperature;
+	bool isExternalInterruptOn;
+	float internalTemperature;
+	String batteryLevelGraf;
 	char _whatIsHappened = 'X';
 	uint16_t offSetTemp = 324;
 	uint16_t smokeMaxLevel = 1023;
+	uint8_t internalTemperatureMaxValue = 50;
 	bool isDataChanged = false;
+	uint8_t externalTemperatureMaxValue;
+	uint8_t probesNumber;
+	bool isActiveDebug = false;
 };
 

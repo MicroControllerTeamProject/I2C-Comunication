@@ -56,12 +56,12 @@ void loop() {
 
 	Serial.println("---------Start master activity");
 
-	requestDataFromSlave("getMenuDataBytes");
+	requestDataToSlave("getMenuDataBytes");
 
 	while (!deserializeIncomingDataWithJson())
 	{
 		//If on error recall data!!!
-		requestDataFromSlave("getMenuDataBytes");
+		requestDataToSlave("getMenuDataBytes");
 	}
 
 	Serial.println("---------Stop master activity");
@@ -78,11 +78,11 @@ void loop() {
 	}
 }
 
-void requestDataFromSlave(char* streamDataBytes)
+void requestDataToSlave(char* contextNameToReceive)
 {
 	Wire.beginTransmission(4);
 
-	Wire.write(streamDataBytes);
+	Wire.write(contextNameToReceive);
 
 	Wire.endTransmission();
 
