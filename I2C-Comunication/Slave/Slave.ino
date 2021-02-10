@@ -20,12 +20,19 @@ void setup() {
 
 	Serial.begin(9600);
 
+	initializeTransfertObject();
+
+}
+
+void initializeTransfertObject()
+{
 	transfertObject.isActiveDebug = false;
 
 	transfertObject.isSystemActivated = false;
 
-	
+	transfertObject.isBuzzerON = true;
 
+	transfertObject.internalTemperature = 10.45;
 }
 
 void initWire() {
@@ -43,21 +50,38 @@ void receiveEvent(int howMany)
 	i2CJsonSlaveTransmision.receiveEvent(howMany);
 }
 
+uint8_t const dataArrayIndex = 2;
 
+uint8_t  arrayIndex = 0;
 
 void requestEvent()
 {
-	Serial.println("receive a request");
+	//Serial.println("receive a request");
+
+	String propertiesArray[dataArrayIndex] = { "int.Tem" ,"isBuzON" };
+
+	String valueArray[dataArrayIndex] = { String(transfertObject.internalTemperature), String(transfertObject.isBuzzerON) };
 
 	String masterRequest = (char*)i2CJsonSlaveTransmision.getMasterRequest();
 
-	String dataToSend = prepareDataToSend(masterRequest);
+	String dataToSend = prepareDataToSend(masterRequest, propertiesArray[arrayIndex], valueArray[arrayIndex]);
 
 	//Serial.println(dataToSend);
-
 	if (dataToSend != "") {
 		i2CJsonSlaveTransmision.sendDataToMaster(dataToSend);
 	}
+
+	if ((!i2CJsonSlaveTransmision.isOnTransmissionData) && (arrayIndex < dataArrayIndex - 1))
+	{
+		Serial.print("Aggiungo + a indice array"); Serial.println(arrayIndex);
+		arrayIndex++;
+	}
+	else if ((!i2CJsonSlaveTransmision.isOnTransmissionData) && (arrayIndex == dataArrayIndex - 1))
+	{
+		Serial.print("Azzero a indice array"); Serial.println(arrayIndex);
+		arrayIndex = 0;
+	}
+
 }
 void loop() {
 	//transfertObject.whatIsHappened = 'X';
@@ -69,14 +93,18 @@ void loop() {
 	}
 }
 
-String prepareDataToSend(String masterRequest)
+String prepareDataToSend(String masterRequest, String propertyName, String propertyValue)
 {
+
+	/*Serial.print("propertyName : "); Serial.println(propertyName);
+	Serial.print("propertyValue : "); Serial.println(propertyValue);*/
+
 	String value = "";
 	if (masterRequest == "menuData")
 	{
-		value = "{'isBuzzerON':" + String(transfertObject.isBuzzerON) +
-			",'whatIsHappened':'" + String(transfertObject.whatIsHappened) + "'" +
-			",'internalTemperature':" + String(transfertObject.internalTemperature) +
+		value = "{'" + propertyName + "':" + propertyValue +
+			/*",'whatIsHappened':'" + String(transfertObject.whatIsHappened) + "'" +
+			",'internalTemperature':" + String(transfertObject.internalTemperature) +*/
 			"}";
 		//Serial.println(transfertObject.internalTemperature);
 	}

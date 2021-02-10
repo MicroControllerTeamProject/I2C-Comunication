@@ -46,7 +46,29 @@ void setup()
 //}
 
 void loop() {
-	i2CJsonMasterTransmision.requestDataToSlave("menuData", 4);
-	delay(5000);
+
+	if (i2CJsonMasterTransmision.requestDataToSlave("menuData", 4))
+	{
+
+		while(!i2CJsonMasterTransmision.deserializeIncomingDataWithJson())
+		{
+			i2CJsonMasterTransmision.requestDataToSlave("menuData", 4);
+		}
+
+		if (!i2CJsonMasterTransmision.getJsonDocument()["isBuzON"].isNull())
+		{
+			transfertObject.isBuzzerON = i2CJsonMasterTransmision.getJsonDocument()["isBuzON"];
+		}
+
+		if (!i2CJsonMasterTransmision.getJsonDocument()["int.Tem"].isNull())
+		{
+			transfertObject.internalTemperature = i2CJsonMasterTransmision.getJsonDocument()["int.Tem"];
+		}
+		Serial.print("isBuzzerON = "); Serial.println(transfertObject.isBuzzerON);
+
+		Serial.print("internalTemperature = "); Serial.println(transfertObject.internalTemperature);
+
+		//delay(5000);
+	}
 }
 

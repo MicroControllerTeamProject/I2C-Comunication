@@ -35,7 +35,7 @@ void I2CJsonSlaveTransmission::receiveEvent(int howMany)
 
 	if (isDataComingFromMaster)
 	{
-		Serial.print(c);
+		//Serial.print(c);
 		jsonArray[i] = c;
 		i++;
 	}
@@ -50,7 +50,7 @@ void I2CJsonSlaveTransmission::receiveEvent(int howMany)
 void I2CJsonSlaveTransmission::requestEvent() {
 }
 
-StaticJsonDocument<100> I2CJsonSlaveTransmission::getJsonDocument()
+StaticJsonDocument<30> I2CJsonSlaveTransmission::getJsonDocument()
 {
 	return this->doc;
 }
@@ -62,22 +62,22 @@ void I2CJsonSlaveTransmission::sendDataToMaster(String dataToSend)
 	}
 	else {
 		Wire.write(dataToSend.length());
-		Serial.println("Bytes to trasfert : "); Serial.println(dataToSend.length());
+		Serial.print("Bytes to trasfert : "); Serial.println(dataToSend.length());
 		this->isOnTransmissionData = true;
 	}
 }
 
 void I2CJsonSlaveTransmission::sendStreamDataToMaster(String dataToSend)
 {
-	Wire.write(dataToSend[index]);
-	Serial.println(dataToSend[index]);
-	index = index + 1;
-	if (index > (dataToSend.length() - 1))
+	Wire.write(dataToSend[dataIndex]);
+	//Serial.println(dataToSend[dataIndex]);
+	dataIndex = dataIndex + 1;
+	if (dataIndex > (dataToSend.length() - 1))
 	{
 		Serial.println("stop request menuData");
 		memset(commandFromMaster, 0, sizeof(commandFromMaster));
 		this->isOnTransmissionData = false;
-		index = 0;
+		dataIndex = 0;
 	}
 }
 

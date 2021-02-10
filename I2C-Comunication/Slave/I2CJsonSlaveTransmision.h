@@ -12,18 +12,19 @@ public:
 	void requestEvent();
 	void sendStreamDataToMaster(String dataToSend);
 	bool deserializeIncomingDataWithJson();
-	StaticJsonDocument<100> getJsonDocument();
+	StaticJsonDocument<30> getJsonDocument();
 	char* getMasterRequest();
 	void sendDataToMaster(String dataToSend);
+	bool isOnTransmissionData = false;
 
 private:
-	char jsonArray[100];
+	char jsonArray[30];
 	char* contextNameToReceive;
 	int address;
-	StaticJsonDocument<100> doc;
-	char commandFromMaster[21];
-	uint8_t index = 0;
+	StaticJsonDocument<30> doc;
+	char commandFromMaster[10];
+	uint8_t dataIndex = 0;
 	String dataToSend = "";
 	bool isDataComingFromMaster = false;
-	bool isOnTransmissionData = false;
+	/*bool isOnTransmissionData = false;*/
 };

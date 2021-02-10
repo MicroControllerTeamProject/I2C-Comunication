@@ -39,6 +39,11 @@ bool I2CJsonMasterTransmision::requestDataToSlave(char* contextNameToReceive,int
 
 	int numberOfBytes = Wire.read();
 
+	if (numberOfBytes == 0)
+	{
+		return false;
+	}
+
 	Serial.print(numberOfBytes);
 
 	for (int i = 0; i < numberOfBytes; i++)
@@ -50,6 +55,7 @@ bool I2CJsonMasterTransmision::requestDataToSlave(char* contextNameToReceive,int
 			Serial.print(c);
 		}
 	}
+	return true;
 }
 
 bool I2CJsonMasterTransmision::deserializeIncomingDataWithJson()
@@ -63,7 +69,7 @@ bool I2CJsonMasterTransmision::deserializeIncomingDataWithJson()
 	return true;
 }
 
-StaticJsonDocument<100> I2CJsonMasterTransmision::getJsonDocument()
+StaticJsonDocument<30> I2CJsonMasterTransmision::getJsonDocument()
 {
 	return this->doc;
 }

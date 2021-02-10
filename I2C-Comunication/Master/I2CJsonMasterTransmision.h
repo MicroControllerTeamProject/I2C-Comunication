@@ -12,12 +12,12 @@ public:
 	void sendDataToSlave(String jsonString, int address);
 	bool requestDataToSlave(char* contextNameToReceive, int address);
 	bool deserializeIncomingDataWithJson();
-	StaticJsonDocument<100> getJsonDocument();
+	StaticJsonDocument<30> getJsonDocument();
 
 private:
-	char jsonArray[100];
+	char jsonArray[30];
 	char* contextNameToReceive;
 	int address;
-	StaticJsonDocument<100> doc;
+	StaticJsonDocument<30> doc;
 };
 
