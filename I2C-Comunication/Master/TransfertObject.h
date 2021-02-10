@@ -14,7 +14,7 @@ namespace PowerGardianSystem
 		bool isExternalInterruptOn;
 		float internalTemperature;
 		String batteryLevelGraf;
-		char whatIsHappened = 'X';
+		String whatIsHappened;
 		uint16_t offSetTemp = 324;
 		uint16_t smokeMaxLevel = 1023;
 		uint8_t internalTemperatureMaxValue = 50;

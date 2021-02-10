@@ -21,6 +21,9 @@
 
 #include "I2CJsonMasterTransmision.h"
 
+#include <avr/wdt.h>
+
+
 PowerGardianSystem::TransfertObject transfertObject;
 
 I2CJsonMasterTransmision i2CJsonMasterTransmision;
@@ -46,14 +49,14 @@ void setup()
 //}
 
 void loop() {
-
 	if (i2CJsonMasterTransmision.requestDataToSlave("menuData", 4))
 	{
-
+		wdt_enable(WDTO_8S);
 		while(!i2CJsonMasterTransmision.deserializeIncomingDataWithJson())
 		{
 			i2CJsonMasterTransmision.requestDataToSlave("menuData", 4);
 		}
+		wdt_disable();
 
 		if (!i2CJsonMasterTransmision.getJsonDocument()["isBuzON"].isNull())
 		{
@@ -64,11 +67,23 @@ void loop() {
 		{
 			transfertObject.internalTemperature = i2CJsonMasterTransmision.getJsonDocument()["int.Tem"];
 		}
+
+		if (!i2CJsonMasterTransmision.getJsonDocument()["whIsHap"].isNull())
+		{
+			String value  = i2CJsonMasterTransmision.getJsonDocument()["whIsHap"];
+			transfertObject.whatIsHappened = value;
+		}
+		Serial.println("");
+
 		Serial.print("isBuzzerON = "); Serial.println(transfertObject.isBuzzerON);
 
 		Serial.print("internalTemperature = "); Serial.println(transfertObject.internalTemperature);
 
-		//delay(5000);
+		Serial.print("whatIsHappened = "); Serial.println(transfertObject.whatIsHappened);
+
+		Serial.println("");
+
+		delay(5000);
 	}
 }
 

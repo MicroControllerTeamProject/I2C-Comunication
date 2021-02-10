@@ -7,6 +7,7 @@
 #include "TransfertObject.h";
 #include "I2CJsonSlaveTransmision.h"
 
+using namespace myApplication;
 
 I2CJsonSlaveTransmission i2CJsonSlaveTransmision;
 
@@ -50,7 +51,7 @@ void receiveEvent(int howMany)
 	i2CJsonSlaveTransmision.receiveEvent(howMany);
 }
 
-uint8_t const dataArrayIndex = 2;
+uint8_t const dataArrayIndex = 3;
 
 uint8_t  arrayIndex = 0;
 
@@ -58,9 +59,12 @@ void requestEvent()
 {
 	//Serial.println("receive a request");
 
-	String propertiesArray[dataArrayIndex] = { "int.Tem" ,"isBuzON" };
+	String propertiesArray[dataArrayIndex] = { "int.Tem" ,"isBuzON" , "whIsHap" };
 
-	String valueArray[dataArrayIndex] = { String(transfertObject.internalTemperature), String(transfertObject.isBuzzerON) };
+	String valueArray[dataArrayIndex] = { String(transfertObject.internalTemperature), 
+		String(transfertObject.isBuzzerON) ,
+		String(String("'") + String(transfertObject.whatIsHappened) + String("'"))
+	};
 
 	String masterRequest = (char*)i2CJsonSlaveTransmision.getMasterRequest();
 
@@ -73,43 +77,37 @@ void requestEvent()
 
 	if ((!i2CJsonSlaveTransmision.isOnTransmissionData) && (arrayIndex < dataArrayIndex - 1))
 	{
-		Serial.print("Aggiungo + a indice array"); Serial.println(arrayIndex);
+		//Serial.print("Aggiungo + a indice array"); Serial.println(arrayIndex);
 		arrayIndex++;
 	}
 	else if ((!i2CJsonSlaveTransmision.isOnTransmissionData) && (arrayIndex == dataArrayIndex - 1))
 	{
-		Serial.print("Azzero a indice array"); Serial.println(arrayIndex);
+		//Serial.print("Azzero a indice array"); Serial.println(arrayIndex);
 		arrayIndex = 0;
 	}
 
 }
 void loop() {
-	//transfertObject.whatIsHappened = 'X';
 	int i = 0;
 	while (true)
 	{
 		Serial.println(i++);
-		delay(1000);
+		delay(10000);
 	}
 }
 
 String prepareDataToSend(String masterRequest, String propertyName, String propertyValue)
 {
-
-	/*Serial.print("propertyName : "); Serial.println(propertyName);
-	Serial.print("propertyValue : "); Serial.println(propertyValue);*/
-
 	String value = "";
 	if (masterRequest == "menuData")
 	{
-		value = "{'" + propertyName + "':" + propertyValue +
-			/*",'whatIsHappened':'" + String(transfertObject.whatIsHappened) + "'" +
-			",'internalTemperature':" + String(transfertObject.internalTemperature) +*/
-			"}";
-		//Serial.println(transfertObject.internalTemperature);
+		value = "{'" + propertyName + "':" + propertyValue + "}";
 	}
 	return value;
 }
+
+
+
 
 
 
