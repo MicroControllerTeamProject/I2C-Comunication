@@ -35,24 +35,33 @@ void setup()
 	Serial.begin(9600);
 }
 
-//void initTransfertObject()
-//{
-//	transfertObject.isBuzzerON = false;
-//	transfertObject.isDataChanged = true;
-//}
-//
-//void  prepareDataToSend()
-//{
-//	jsonStringToSend = "#{'isBuzzerON':" + String(transfertObject.isBuzzerON) +
-//		",'isDataChanged':" + String(transfertObject.isDataChanged) +
-//		"};";
-//}
+void initTransfertObject()
+{
+	transfertObject.offSetTemp = 324;
+	transfertObject.isDataChanged = true;
+}
+
+void  prepareDataToSend()
+{
+	jsonStringToSend = "{'isBuzzerON':" + String(transfertObject.isBuzzerON) +
+		",'isDataChanged':" + String(transfertObject.isDataChanged) +
+		"}";
+}
 
 void loop() {
+
+	getDataFromSlave();
+
+	delay(5000);
+}
+
+
+void getDataFromSlave()
+{
 	if (i2CJsonMasterTransmision.requestDataToSlave("menuData", 4))
 	{
 		wdt_enable(WDTO_8S);
-		while(!i2CJsonMasterTransmision.deserializeIncomingDataWithJson())
+		while (!i2CJsonMasterTransmision.deserializeIncomingDataWithJson())
 		{
 			i2CJsonMasterTransmision.requestDataToSlave("menuData", 4);
 		}
@@ -70,7 +79,7 @@ void loop() {
 
 		if (!i2CJsonMasterTransmision.getJsonDocument()["whIsHap"].isNull())
 		{
-			String value  = i2CJsonMasterTransmision.getJsonDocument()["whIsHap"];
+			String value = i2CJsonMasterTransmision.getJsonDocument()["whIsHap"];
 			transfertObject.whatIsHappened = value;
 		}
 		Serial.println("");
@@ -82,8 +91,11 @@ void loop() {
 		Serial.print("whatIsHappened = "); Serial.println(transfertObject.whatIsHappened);
 
 		Serial.println("");
-
-		delay(5000);
 	}
+}
+
+void sendDataToSlave()
+{
+
 }
 

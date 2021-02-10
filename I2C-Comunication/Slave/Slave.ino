@@ -61,7 +61,8 @@ void requestEvent()
 
 	String propertiesArray[dataArrayIndex] = { "int.Tem" ,"isBuzON" , "whIsHap" };
 
-	String valueArray[dataArrayIndex] = { String(transfertObject.internalTemperature), 
+	String valueArray[dataArrayIndex] = { 
+		String(transfertObject.internalTemperature), 
 		String(transfertObject.isBuzzerON) ,
 		String(String("'") + String(transfertObject.whatIsHappened) + String("'"))
 	};
