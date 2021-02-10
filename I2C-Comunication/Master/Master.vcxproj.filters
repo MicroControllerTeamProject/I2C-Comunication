@@ -27,9 +27,15 @@
     <ClInclude Include="TransfertObject.h">
       <Filter>library</Filter>
     </ClInclude>
+    <ClInclude Include="I2CJsonMasterTransmision.h">
+      <Filter>library</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="TransfertObject.cpp">
+      <Filter>library</Filter>
+    </ClCompile>
+    <ClCompile Include="I2CJsonMasterTransmision.cpp">
       <Filter>library</Filter>
     </ClCompile>
   </ItemGroup>

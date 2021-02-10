@@ -1,4 +1,5 @@
 #include "TransfertObject.h"
 
-TransfertObject::TransfertObject(){
-}
+using namespace PowerGardianSystem;
+	TransfertObject::TransfertObject() {
+	}

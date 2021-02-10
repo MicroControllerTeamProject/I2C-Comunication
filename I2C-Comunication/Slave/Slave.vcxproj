@@ -112,10 +112,12 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="I2CJsonSlaveTransmision.h" />
     <ClInclude Include="TransfertObject.h" />
     <ClInclude Include="__vm\.Slave.vsarduino.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="I2CJsonSlaveTransmision.cpp" />
     <ClCompile Include="TransfertObject.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -12,7 +12,7 @@ public:
 	bool isExternalInterruptOn;
 	float internalTemperature;
 	String batteryLevelGraf;
-	char _whatIsHappened = 'X';
+	char whatIsHappened = 'X';
 	uint16_t offSetTemp = 324;
 	uint16_t smokeMaxLevel = 1023;
 	uint8_t internalTemperatureMaxValue = 50;

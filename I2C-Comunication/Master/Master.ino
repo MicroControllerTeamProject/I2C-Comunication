@@ -15,123 +15,38 @@
 
 // This example code is in the public domain.
 
-#include <Wire.h>
-
 #include <ArduinoJson.h>
 
 #include "TransfertObject.h"
 
-StaticJsonDocument<200> doc;
+#include "I2CJsonMasterTransmision.h"
 
-TransfertObject transfertObject;
+PowerGardianSystem::TransfertObject transfertObject;
 
-uint8_t slaveAddress = 4;
+I2CJsonMasterTransmision i2CJsonMasterTransmision;
 
 String jsonStringToSend = "";
-
-char jsonArray[200];
 
 void setup()
 {
 	Serial.begin(9600);
-
-	Wire.begin();
 }
 
-void initTransfertObject()
-{
-	transfertObject.isBuzzerON = false;
-	transfertObject.isDataChanged = true;
-}
-
-void  prepareDataToSend()
-{
-	jsonStringToSend = "#{'isBuzzerON':" + String(transfertObject.isBuzzerON) +
-		",'isDataChanged':" + String(transfertObject.isDataChanged) +
-		"};";
-	//jsonStringToSend.toCharArray(jsonArray, jsonStringToSend.length() + 1);
-}
+//void initTransfertObject()
+//{
+//	transfertObject.isBuzzerON = false;
+//	transfertObject.isDataChanged = true;
+//}
+//
+//void  prepareDataToSend()
+//{
+//	jsonStringToSend = "#{'isBuzzerON':" + String(transfertObject.isBuzzerON) +
+//		",'isDataChanged':" + String(transfertObject.isDataChanged) +
+//		"};";
+//}
 
 void loop() {
-
-	Serial.println("---------Start master activity");
-
-	requestDataToSlave("getMenuDataBytes");
-
-	while (!deserializeIncomingDataWithJson())
-	{
-		//If on error recall data!!!
-		requestDataToSlave("getMenuDataBytes");
-	}
-
-	Serial.println("---------Stop master activity");
-
+	i2CJsonMasterTransmision.requestDataToSlave("menuData", 4);
 	delay(5000);
-
-	initTransfertObject();
-
-	if (transfertObject.isDataChanged)
-	{
-		prepareDataToSend();
-
-		sendDataToSlave();
-	}
-}
-
-void requestDataToSlave(char* contextNameToReceive)
-{
-	Wire.beginTransmission(4);
-
-	Wire.write(contextNameToReceive);
-
-	Wire.endTransmission();
-
-	Wire.requestFrom(4, 4);
-
-	int numberOfBytes = Wire.read();
-
-	//Serial.print(numberOfBytes);
-	for (int i = 0; i < numberOfBytes; i++)
-	{
-		Wire.requestFrom(4, 1);
-
-		while (Wire.available()) {
-			char c = Wire.read();
-			jsonArray[i] = c;
-			Serial.print(c);
-		}
-	}
-	Serial.println();
-}
-
-void sendDataToSlave()
-{
-	for (int i = 0; i < jsonStringToSend.length() + 1; i++)
-	{
-		Wire.beginTransmission(4);
-		Wire.write(jsonStringToSend[i]);
-		Wire.endTransmission();
-	}
-	Serial.println("Finito");
-	delay(1000);
-}
-
-bool deserializeIncomingDataWithJson()
-{
-	DeserializationError error = deserializeJson(doc, jsonArray);
-	if (error) {
-		Serial.print(F("deserializeJson() failed: "));
-		Serial.println(error.f_str());
-		return false;
-	}
-
-	transfertObject.isBuzzerON = doc["isBuzzerON"];
-	transfertObject.batteryVoltage = doc["batteryVoltage"];
-
-	Serial.print("isBuzzerON : "); Serial.println(transfertObject.isBuzzerON);
-
-	Serial.print("batteryVoltage : "); Serial.println(transfertObject.batteryVoltage);
-
-	return true;
 }
 
