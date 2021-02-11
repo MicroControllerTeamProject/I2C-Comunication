@@ -49,9 +49,19 @@ void receiveEvent(int howMany)
 {
 	//Serial.println("receiving data");
 	i2CJsonSlaveTransmision.receiveEvent(howMany);
+
 	if (i2CJsonSlaveTransmision.isDataChanged)
 	{
-		transfertObject.isBuzzerON = i2CJsonSlaveTransmision.getJsonDocument()["isBuzzerON"];
+		if (!i2CJsonSlaveTransmision.getJsonDocument()["isBuzON"].isNull())
+		{
+			transfertObject.isBuzzerON = i2CJsonSlaveTransmision.getJsonDocument()["isBuzON"];
+		}
+
+		if (!i2CJsonSlaveTransmision.getJsonDocument()["whIsHap"].isNull())
+		{
+			String h = i2CJsonSlaveTransmision.getJsonDocument()["whIsHap"];
+			transfertObject.whatIsHappened = h;
+		}
 		i2CJsonSlaveTransmision.isDataChanged = false;
 	}
 }

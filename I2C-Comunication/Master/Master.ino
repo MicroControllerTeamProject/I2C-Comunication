@@ -39,6 +39,7 @@ void initTransfertObject()
 	transfertObject.offSetTemp = 324;
 	transfertObject.isDataChanged = true;
 	transfertObject.isBuzzerON = true;
+	transfertObject.whatIsHappened = "P";
 }
 
 
@@ -49,9 +50,10 @@ void loop() {
 
 	//delay(5000);
 
-	sendDataToSlave("{'isBuzzerON':" + String(transfertObject.isBuzzerON) + "}");
-
-	delay(100);
+	sendDataToSlave("{'isBuzON':" + String(transfertObject.isBuzzerON) + "}");
+	delay(500);
+	sendDataToSlave("{'whIsHap':'" + String(transfertObject.whatIsHappened) + "'}");
+	delay(500);
 	
 }
 
