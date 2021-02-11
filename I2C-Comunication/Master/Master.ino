@@ -28,31 +28,31 @@ PowerGardianSystem::TransfertObject transfertObject;
 
 I2CJsonMasterTransmision i2CJsonMasterTransmision;
 
-String jsonStringToSend = "";
-
 void setup()
 {
 	Serial.begin(9600);
+	initTransfertObject();
 }
 
 void initTransfertObject()
 {
 	transfertObject.offSetTemp = 324;
 	transfertObject.isDataChanged = true;
+	transfertObject.isBuzzerON = true;
 }
 
-void  prepareDataToSend()
-{
-	jsonStringToSend = "{'isBuzzerON':" + String(transfertObject.isBuzzerON) +
-		",'isDataChanged':" + String(transfertObject.isDataChanged) +
-		"}";
-}
+
 
 void loop() {
 
 	getDataFromSlave();
 
-	delay(5000);
+	//delay(5000);
+
+	sendDataToSlave("{'isBuzzerON':" + String(transfertObject.isBuzzerON) + "}");
+
+	delay(100);
+	
 }
 
 
@@ -94,8 +94,9 @@ void getDataFromSlave()
 	}
 }
 
-void sendDataToSlave()
+void sendDataToSlave(String dataToSend)
 {
-
+	i2CJsonMasterTransmision.sendDataToSlave(dataToSend, 4);
+	delay(200);
 }
 

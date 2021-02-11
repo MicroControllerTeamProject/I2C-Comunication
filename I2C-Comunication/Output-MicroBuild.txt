@@ -1,1 +1,6 @@
-﻿Compiling 'Slave' for 'Arduino/Genuino Uno'
+﻿Compiling 'Master' for 'Arduino/Genuino Uno'
+Program size: 14,898 bytes (used 46% of a 32,256 byte maximum) (3.14 secs)
+Minimum Memory Usage: 675 bytes (33% of a 2048 byte maximum)
+ 
+Uploading 'Master' to 'Arduino/Genuino Uno' using 'COM13'
+	The upload process has finished.

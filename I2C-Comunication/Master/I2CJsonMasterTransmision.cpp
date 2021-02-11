@@ -11,11 +11,11 @@ void I2CJsonMasterTransmision::sendDataToSlave(String jsonString, int address)
 	jsonString = "#" + jsonString + ";";
 	for (int i = 0; i < jsonString.length() + 1; i++)
 	{
-		/*wdt_enable(WDTO_8S);*/
+		wdt_enable(WDTO_8S);
 		Wire.beginTransmission(address);
 		Wire.write(jsonString[i]);
 		Wire.endTransmission();
-		/*wdt_disable();*/
+		wdt_disable();
 	}
 }
 

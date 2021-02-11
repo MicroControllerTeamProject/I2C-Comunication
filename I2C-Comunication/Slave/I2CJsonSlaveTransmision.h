@@ -16,6 +16,7 @@ public:
 	char* getMasterRequest();
 	void sendDataToMaster(String dataToSend);
 	bool isOnTransmissionData = false;
+	bool isDataChanged = false;
 
 private:
 	char jsonArray[30];
@@ -26,5 +27,6 @@ private:
 	uint8_t dataIndex = 0;
 	String dataToSend = "";
 	bool isDataComingFromMaster = false;
+	
 	/*bool isOnTransmissionData = false;*/
 };

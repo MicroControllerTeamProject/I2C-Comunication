@@ -31,7 +31,7 @@ void initializeTransfertObject()
 
 	transfertObject.isSystemActivated = false;
 
-	transfertObject.isBuzzerON = true;
+	transfertObject.isBuzzerON = false;
 
 	transfertObject.internalTemperature = 10.45;
 }
@@ -47,8 +47,13 @@ void initWire() {
 
 void receiveEvent(int howMany)
 {
-	Serial.println("receiving data");
+	//Serial.println("receiving data");
 	i2CJsonSlaveTransmision.receiveEvent(howMany);
+	if (i2CJsonSlaveTransmision.isDataChanged)
+	{
+		transfertObject.isBuzzerON = i2CJsonSlaveTransmision.getJsonDocument()["isBuzzerON"];
+		i2CJsonSlaveTransmision.isDataChanged = false;
+	}
 }
 
 uint8_t const dataArrayIndex = 3;
@@ -59,6 +64,8 @@ void requestEvent()
 {
 	//Serial.println("receive a request");
 
+	String masterRequest = (char*)i2CJsonSlaveTransmision.getMasterRequest();
+
 	String propertiesArray[dataArrayIndex] = { "int.Tem" ,"isBuzON" , "whIsHap" };
 
 	String valueArray[dataArrayIndex] = { 
@@ -66,8 +73,6 @@ void requestEvent()
 		String(transfertObject.isBuzzerON) ,
 		String(String("'") + String(transfertObject.whatIsHappened) + String("'"))
 	};
-
-	String masterRequest = (char*)i2CJsonSlaveTransmision.getMasterRequest();
 
 	String dataToSend = prepareDataToSend(masterRequest, propertiesArray[arrayIndex], valueArray[arrayIndex]);
 

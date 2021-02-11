@@ -28,14 +28,14 @@ void I2CJsonSlaveTransmission::receiveEvent(int howMany)
 	if (c == ';')
 	{
 		deserializeIncomingDataWithJson();
-
 		isDataComingFromMaster = false;
+		isDataChanged = true;
 		i = 0;
 	}
 
 	if (isDataComingFromMaster)
 	{
-		//Serial.print(c);
+		Serial.print(c);
 		jsonArray[i] = c;
 		i++;
 	}
