@@ -39,7 +39,7 @@ void initTransfertObject()
 	transfertObject.offSetTemp = 324;
 	transfertObject.isDataChanged = true;
 	transfertObject.isBuzzerON = true;
-	transfertObject.batteryLevelGraf = "[||||]o";
+	//transfertObject.batteryLevelGraf = "[||||]o";
 }
 
 
@@ -52,8 +52,8 @@ void loop() {
 
 	sendDataToSlave("{'isBuzON':" + String(transfertObject.isBuzzerON) + "}");
 	delay(500);
-	sendDataToSlave("{'batLevG':'" + String(transfertObject.batteryLevelGraf) + "'}");
-	delay(500);
+	/*sendDataToSlave("{'batLevG':'" + String(transfertObject.batteryLevelGraf) + "'}");
+	delay(500);*/
 	
 }
 
@@ -79,11 +79,13 @@ void getDataFromSlave()
 			transfertObject.internalTemperature = i2CJsonMasterTransmision.getJsonDocument()["int.Tem"];
 		}
 
-		if (!i2CJsonMasterTransmision.getJsonDocument()["whIsHap"].isNull())
+		if (!i2CJsonMasterTransmision.getJsonDocument()["batLevG"].isNull())
 		{
-			String value = i2CJsonMasterTransmision.getJsonDocument()["whIsHap"];
-			transfertObject.whatIsHappened = value;
+			String value = i2CJsonMasterTransmision.getJsonDocument()["batLevG"];
+			transfertObject.batteryLevelGraf = value;
 		}
+
+
 		Serial.println("");
 
 		Serial.print("isBuzzerON = "); Serial.println(transfertObject.isBuzzerON);

@@ -34,6 +34,8 @@ void initializeTransfertObject()
 	transfertObject.isBuzzerON = false;
 
 	transfertObject.internalTemperature = 10.45;
+
+	transfertObject.batteryLevelGraf = "[||||]o";
 }
 
 void initWire() {
@@ -55,12 +57,6 @@ void receiveEvent(int howMany)
 		if (!i2CJsonSlaveTransmision.getJsonDocument()["isBuzON"].isNull())
 		{
 			transfertObject.isBuzzerON = i2CJsonSlaveTransmision.getJsonDocument()["isBuzON"];
-		}
-
-		if (!i2CJsonSlaveTransmision.getJsonDocument()["batLevG"].isNull())
-		{
-			String value = i2CJsonSlaveTransmision.getJsonDocument()["batLevG"];
-			transfertObject.batteryLevelGraf = value;
 		}
 		i2CJsonSlaveTransmision.isDataChanged = false;
 	}
