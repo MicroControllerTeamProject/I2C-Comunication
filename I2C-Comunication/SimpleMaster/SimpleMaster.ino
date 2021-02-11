@@ -15,6 +15,7 @@ TransfertObject transfertObject;
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);
+	initTransfertObject();
 	Wire.begin();
 }
 
@@ -28,26 +29,41 @@ void initTransfertObject()
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	String h = String(transfertObject.offSetTemp);
-	char d[10];
-	h.toCharArray(d, h.length()+1);
+	sendDataToSlave();
+}
+char vauleChar[10];
+String valueString = "";
 
+void sendDataToSlave()
+{
 	wdt_enable(WDTO_8S);
+
 	Wire.beginTransmission(4);
 	Wire.write("begin");
 	Wire.endTransmission();
+
+	valueString = String(transfertObject.offSetTemp);
+	valueString.toCharArray(vauleChar, valueString.length() + 1);
+
 	Wire.beginTransmission(4);
-	Wire.write(d);
+	Wire.write(vauleChar);
 	Wire.endTransmission();
+
+	valueString = String(transfertObject.batteryLevelGraf);
+	valueString.toCharArray(vauleChar, valueString.length() + 1);
+
 	Wire.beginTransmission(4);
-	Wire.write("X");
+	Wire.write(vauleChar);
 	Wire.endTransmission();
+
 	Wire.beginTransmission(4);
 	Wire.write("10.56");
 	Wire.endTransmission();
+
 	Wire.beginTransmission(4);
 	Wire.write("end");
 	Wire.endTransmission();
+
 	wdt_disable();
 	delay(1000);
 }
