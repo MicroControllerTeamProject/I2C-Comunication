@@ -39,7 +39,7 @@ void initTransfertObject()
 	transfertObject.offSetTemp = 324;
 	transfertObject.isDataChanged = true;
 	transfertObject.isBuzzerON = true;
-	transfertObject.whatIsHappened = "P";
+	transfertObject.batteryLevelGraf = "[||||]o";
 }
 
 
@@ -52,7 +52,7 @@ void loop() {
 
 	sendDataToSlave("{'isBuzON':" + String(transfertObject.isBuzzerON) + "}");
 	delay(500);
-	sendDataToSlave("{'whIsHap':'" + String(transfertObject.whatIsHappened) + "'}");
+	sendDataToSlave("{'batLevG':'" + String(transfertObject.batteryLevelGraf) + "'}");
 	delay(500);
 	
 }
@@ -90,7 +90,7 @@ void getDataFromSlave()
 
 		Serial.print("internalTemperature = "); Serial.println(transfertObject.internalTemperature);
 
-		Serial.print("whatIsHappened = "); Serial.println(transfertObject.whatIsHappened);
+		Serial.print("batteryLevelGraf = "); Serial.println(transfertObject.batteryLevelGraf);
 
 		Serial.println("");
 	}

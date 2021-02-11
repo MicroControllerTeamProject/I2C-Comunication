@@ -57,10 +57,10 @@ void receiveEvent(int howMany)
 			transfertObject.isBuzzerON = i2CJsonSlaveTransmision.getJsonDocument()["isBuzON"];
 		}
 
-		if (!i2CJsonSlaveTransmision.getJsonDocument()["whIsHap"].isNull())
+		if (!i2CJsonSlaveTransmision.getJsonDocument()["batLevG"].isNull())
 		{
-			String h = i2CJsonSlaveTransmision.getJsonDocument()["whIsHap"];
-			transfertObject.whatIsHappened = h;
+			String value = i2CJsonSlaveTransmision.getJsonDocument()["batLevG"];
+			transfertObject.batteryLevelGraf = value;
 		}
 		i2CJsonSlaveTransmision.isDataChanged = false;
 	}
@@ -76,12 +76,12 @@ void requestEvent()
 
 	String masterRequest = (char*)i2CJsonSlaveTransmision.getMasterRequest();
 
-	String propertiesArray[dataArrayIndex] = { "int.Tem" ,"isBuzON" , "whIsHap" };
+	String propertiesArray[dataArrayIndex] = { "int.Tem" ,"isBuzON" , "batLevG" };
 
 	String valueArray[dataArrayIndex] = { 
 		String(transfertObject.internalTemperature), 
 		String(transfertObject.isBuzzerON) ,
-		String(String("'") + String(transfertObject.whatIsHappened) + String("'"))
+		String(String("'") + String(transfertObject.batteryLevelGraf) + String("'"))
 	};
 
 	String dataToSend = prepareDataToSend(masterRequest, propertiesArray[arrayIndex], valueArray[arrayIndex]);

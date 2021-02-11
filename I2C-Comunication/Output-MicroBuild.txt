@@ -1,6 +1,6 @@
 ﻿Compiling 'Master' for 'Arduino/Genuino Uno'
-Program size: 15,062 bytes (used 47% of a 32,256 byte maximum) (3.31 secs)
-Minimum Memory Usage: 689 bytes (34% of a 2048 byte maximum)
+Program size: 15,070 bytes (used 47% of a 32,256 byte maximum) (3.23 secs)
+Minimum Memory Usage: 697 bytes (34% of a 2048 byte maximum)
  
 Uploading 'Master' to 'Arduino/Genuino Uno' using 'COM13'
 	The upload process has finished.
