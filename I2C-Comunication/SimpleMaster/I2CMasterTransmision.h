@@ -3,11 +3,12 @@
 #include <ArduinoJson.h>
 #include <avr/wdt.h>
 
+
 #pragma once
-class I2CJsonMasterTransmision
+class I2CMasterTransmision
 {
 public:
-	I2CJsonMasterTransmision();
+	I2CMasterTransmision();
 	void sendDataToSlave(String jsonString, int address);
 	bool requestDataToSlave(char* contextNameToReceive, int address);
 	bool deserializeIncomingDataWithJson();
