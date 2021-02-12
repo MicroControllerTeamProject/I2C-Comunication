@@ -24,12 +24,13 @@ void initTransfertObject()
 	transfertObject.offSetTemp = 324;
 	transfertObject.isDataChanged = true;
 	transfertObject.isBuzzerON = true;
-	transfertObject.batteryLevelGraf = "[||||]o";
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	sendDataToSlave();
+	requestDataToSlave();
+
+	//sendDataToSlave();
 }
 char vauleChar[10];
 String valueString = "";
@@ -56,9 +57,15 @@ void sendDataToSlave()
 	Wire.write(vauleChar);
 	Wire.endTransmission();
 
+	valueString = String(transfertObject.batteryLevelGraf);
+	valueString.toCharArray(vauleChar, valueString.length() + 1);
+
 	Wire.beginTransmission(4);
 	Wire.write("10.56");
 	Wire.endTransmission();
+
+	valueString = String(transfertObject.batteryLevelGraf);
+	valueString.toCharArray(vauleChar, valueString.length() + 1);
 
 	Wire.beginTransmission(4);
 	Wire.write("end");
@@ -66,4 +73,45 @@ void sendDataToSlave()
 
 	wdt_disable();
 	delay(1000);
+}
+
+void requestDataToSlave()
+{
+	wdt_enable(WDTO_8S);
+
+	/*Wire.beginTransmission(4);
+	Wire.write("begin");
+	Wire.endTransmission();*/
+
+	//transfertObject.batteryVoltage = atof(getData());
+
+	Serial.println(getData());
+	/*transfertObject.batteryLevelGraf = 
+
+	transfertObject.externalTemperatureMaxValue = atoi(getData());*/
+
+	/*Wire.beginTransmission(4);
+	Wire.write("end");
+	Wire.endTransmission();*/
+
+	wdt_disable();
+	delay(1000);
+
+}
+
+char* getData()
+{
+
+	Wire.requestFrom(4, 10);
+	char arrayValue[10];
+	memset(arrayValue, 0, sizeof(arrayValue));
+	uint8_t i = 0;
+	while (Wire.available()) { // slave may send less than requested
+		char c = Wire.read(); // receive a byte as character
+		//Serial.println(c);
+		if (!(c >= 33 && c <= 127)) return;
+		arrayValue[i] = c;
+		i++;
+	}
+	return arrayValue;
 }

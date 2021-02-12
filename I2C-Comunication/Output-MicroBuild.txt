@@ -1,5 +1,1 @@
 ﻿Compiling 'SimpleMaster' for 'Arduino/Genuino Uno'
-Program size: 4,962 bytes (used 15% of a 32,256 byte maximum) (1.60 secs)
-Minimum Memory Usage: 426 bytes (21% of a 2048 byte maximum)
- 
-Uploading 'SimpleMaster' to 'Arduino/Genuino Uno' using 'COM13'
