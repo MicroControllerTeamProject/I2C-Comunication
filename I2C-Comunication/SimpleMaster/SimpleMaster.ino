@@ -9,14 +9,16 @@
 #include "TransfertObject.h"
 using namespace PowerGardianSystem;
 
-
 TransfertObject transfertObject;
+
+const uint8_t numberOfRequestedData = 7;
 
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);
 	Wire.begin();
-	Serial.println("ricevo");
+
+	//Serial.println("ricevo");
 	requestDataToSlave(4);
 }
 
@@ -74,7 +76,8 @@ void sendDataToSlave(int address)
 
 char incomingData[10];
 
-const uint8_t numberOfData = 7;
+
+
 void requestDataToSlave(int address)
 {
 	wdt_enable(WDTO_8S);
@@ -82,7 +85,8 @@ void requestDataToSlave(int address)
 	Wire.write("br");
 	Wire.endTransmission();
 	int cicle = 0;
-	while(cicle<numberOfData)
+
+	while(cicle<numberOfRequestedData)
 	{
 		strcpy(incomingData, getDataFromSlave(address));
 
