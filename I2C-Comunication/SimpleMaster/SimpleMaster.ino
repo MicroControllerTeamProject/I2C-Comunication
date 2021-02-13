@@ -15,103 +15,124 @@ TransfertObject transfertObject;
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);
-	initTransfertObject();
 	Wire.begin();
-}
-
-void initTransfertObject()
-{
-	transfertObject.offSetTemp = 324;
-	transfertObject.isDataChanged = true;
-	transfertObject.isBuzzerON = true;
+	Serial.println("ricevo");
+	requestDataToSlave(4);
 }
 
 // the loop function runs over and over again until power down or reset
-void loop() {
-	requestDataToSlave();
 
-	//sendDataToSlave();
+void loop() {
+	//Serial.println("invio");
+	//sendDataToSlave(4);
+
+	Serial.println(transfertObject.batteryLevelGraf);
+	Serial.println(transfertObject.externalTemperatureMaxValue);
+	delay(1000);
 }
 char vauleChar[10];
 String valueString = "";
 
-void sendDataToSlave()
+void sendDataToSlave(int address)
 {
 	wdt_enable(WDTO_8S);
-
-	Wire.beginTransmission(4);
-	Wire.write("begin");
+	Wire.beginTransmission(address);
+	Wire.write("br");
 	Wire.endTransmission();
 
-	valueString = String(transfertObject.offSetTemp);
+	valueString = String(transfertObject.externalTemperatureMaxValue);
 	valueString.toCharArray(vauleChar, valueString.length() + 1);
 
-	Wire.beginTransmission(4);
+	Wire.beginTransmission(address);
+	Wire.write(vauleChar);
+	Wire.endTransmission();
+
+	/*valueString = String(transfertObject.batteryLevelGraf);
+	valueString.toCharArray(vauleChar, valueString.length() + 1);
+
+	Wire.beginTransmission(address);
 	Wire.write(vauleChar);
 	Wire.endTransmission();
 
 	valueString = String(transfertObject.batteryLevelGraf);
 	valueString.toCharArray(vauleChar, valueString.length() + 1);
 
-	Wire.beginTransmission(4);
-	Wire.write(vauleChar);
-	Wire.endTransmission();
-
-	valueString = String(transfertObject.batteryLevelGraf);
-	valueString.toCharArray(vauleChar, valueString.length() + 1);
-
-	Wire.beginTransmission(4);
+	Wire.beginTransmission(address);
 	Wire.write("10.56");
 	Wire.endTransmission();
 
 	valueString = String(transfertObject.batteryLevelGraf);
 	valueString.toCharArray(vauleChar, valueString.length() + 1);
 
-	Wire.beginTransmission(4);
+	Wire.beginTransmission(address);
 	Wire.write("end");
-	Wire.endTransmission();
+	Wire.endTransmission();*/
 
 	wdt_disable();
 	delay(1000);
 }
 
-void requestDataToSlave()
+char incomingData[10];
+
+const uint8_t numberOfData = 7;
+void requestDataToSlave(int address)
 {
 	wdt_enable(WDTO_8S);
+	Wire.beginTransmission(address);
+	Wire.write("br");
+	Wire.endTransmission();
+	int cicle = 0;
+	while(cicle<numberOfData)
+	{
+		strcpy(incomingData, getDataFromSlave(address));
 
-	/*Wire.beginTransmission(4);
-	Wire.write("begin");
-	Wire.endTransmission();*/
-
-	//transfertObject.batteryVoltage = atof(getData());
-
-	Serial.println(getData());
-	/*transfertObject.batteryLevelGraf = 
-
-	transfertObject.externalTemperatureMaxValue = atoi(getData());*/
-
-	/*Wire.beginTransmission(4);
-	Wire.write("end");
-	Wire.endTransmission();*/
-
-	wdt_disable();
-	delay(1000);
-
+		switch (cicle)
+		{
+		case 0:
+			transfertObject.batteryLevelGraf = incomingData;
+			break;
+		case 1:
+			transfertObject.externalTemperatureMaxValue = atof(incomingData);
+			break;
+		case 2:
+			//transfertObject.batteryLevelGraf = incomingData;
+			break;
+		case 3:
+			//transfertObject.batteryLevelGraf = incomingData;
+			break;
+		case 4:
+			//transfertObject.batteryLevelGraf = incomingData;
+			break;
+		case 5:
+			//transfertObject.batteryLevelGraf = incomingData;
+			break;
+		case 6:
+			//transfertObject.batteryLevelGraf = incomingData;
+			break;
+		default:
+			break;
+		}
+		cicle = cicle + 1;
+		wdt_disable();
+		delay(1000);
+	}
 }
 
-char* getData()
+char* getDataFromSlave(int address)
 {
-
-	Wire.requestFrom(4, 10);
+	Wire.requestFrom(address, 10);
 	char arrayValue[10];
 	memset(arrayValue, 0, sizeof(arrayValue));
 	uint8_t i = 0;
 	while (Wire.available()) { // slave may send less than requested
 		char c = Wire.read(); // receive a byte as character
 		//Serial.println(c);
-		if (!(c >= 33 && c <= 127)) return;
-		arrayValue[i] = c;
-		i++;
+		if ((c >= 33 && c <= 127))
+		{
+			arrayValue[i] = c;
+			i++;
+		}
 	}
+	//Serial.println(i);
 	return arrayValue;
 }

@@ -31,7 +31,7 @@ void initTransfertObject()
 	transfertObject.batteryVoltage = 3.35;
 	transfertObject.isBuzzerON = true;
 	transfertObject.batteryLevelGraf = "[||||]o";
-	transfertObject.externalTemperatureMaxValue = 15;
+	transfertObject.externalTemperatureMaxValue=25;
 }
 
 void initWire() {
@@ -45,7 +45,7 @@ void initWire() {
 
 char data[10];
 int i = 0;
-int dataIndex = 0;
+uint8_t index = 0;
 
 void receiveEvent(int howMany)
 {
@@ -53,13 +53,63 @@ void receiveEvent(int howMany)
 	while (Wire.available()) { // slave may send less than requested
 			char c = Wire.read(); // receive a byte as character
 			data[i] = c;
-			//Serial.print(c);
+			Serial.print(c);
 			i++;
 		}
 	i = 0;
+	String dataReceived = (char*)data;
+	//Reset index for incoming data.(br = begin request)
+	if (dataReceived == "br")
+	{
+		Serial.println("resetto");
+		index = 0;
+	}
+	else
+	{
+		receivedIncomingData();
+	}
 }
 
-uint8_t index = 0;
+void receivedIncomingData()
+{
+	if (index > 1) {
+		index = 0;
+		return;
+	}
+
+	switch (index)
+	{
+	case 0:
+		transfertObject.externalTemperatureMaxValue = atoi(data);
+		index++;
+		break;
+	case 1:
+		index++;
+		break;
+	case 2:
+		
+		index++;
+		break;
+	case 3:
+		
+		index++;
+		break;
+	case 4:
+		
+		index++;
+		break;
+	case 5:
+		
+		index++;
+		break;
+	case 6:
+
+		index++;
+		break;
+	default:
+		break;
+	}
+}
 
 void requestEvent()
 {

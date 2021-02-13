@@ -8,16 +8,16 @@ namespace PowerGardianSystem
 	{
 	public:
 		TransfertObject();
-		bool isSystemActivated;
+		bool isSystemActivated = false;
 		float batteryVoltage;
-		bool isBuzzerON = 0;
+		bool isBuzzerON = false;
 		bool isExternalInterruptOn;
 		float internalTemperature;
 		String batteryLevelGraf;
 		String whatIsHappened = "X";
 		uint16_t offSetTemp = 324;
 		uint16_t smokeMaxLevel = 1023;
-		uint8_t internalTemperatureMaxValue = 50;
+		uint8_t internalTemperatureMaxValue = 40;
 		bool isDataChanged = false;
 		short int externalTemperatureMaxValue;
 		uint8_t probesNumber;
