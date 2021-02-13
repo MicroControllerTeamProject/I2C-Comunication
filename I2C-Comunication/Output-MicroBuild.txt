@@ -1,4 +1,6 @@
-﻿Compiling 'SimpleMaster' for 'Arduino/Genuino Uno'
-Program size: 6,740 bytes (used 21% of a 32,256 byte maximum) (2.20 secs)
-Minimum Memory Usage: 471 bytes (23% of a 2048 byte maximum)
+﻿Compiling 'SimpleSlave' for 'Arduino/Genuino Uno'
+Program size: 6,998 bytes (used 22% of a 32,256 byte maximum) (1.44 secs)
+Minimum Memory Usage: 454 bytes (22% of a 2048 byte maximum)
  
+Uploading 'SimpleSlave' to 'Arduino/Genuino Uno' using 'COM31'
+	The upload process has finished.

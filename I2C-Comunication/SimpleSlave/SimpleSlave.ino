@@ -16,7 +16,7 @@ TransfertObject transfertObject;
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);
-	Serial.println("Restart-9");
+	Serial.println("Restart-10");
 	initWire();
 	initTransfertObject();
 }
@@ -68,7 +68,7 @@ void receiveEvent(int howMany)
 
 void receivedIncomingData()
 {
-	if (index > 1) {
+	if (index > 2) {
 		index = 0;
 		return;
 	}
@@ -84,7 +84,7 @@ void receivedIncomingData()
 		index++;
 		break;
 	case 2:
-		
+		transfertObject.internalTemperatureMaxValue = atoi(data);
 		index++;
 		break;
 	case 3:

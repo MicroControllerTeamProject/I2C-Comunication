@@ -10,7 +10,7 @@ namespace myApplication
 		bool isSystemActivated;
 		float batteryVoltage;
 		bool isBuzzerON = 0;
-		bool isExternalInterruptOn;
+		bool isExternalInterruptOn = 0;
 		float internalTemperature;
 		String batteryLevelGraf;
 		String whatIsHappened = "X";
