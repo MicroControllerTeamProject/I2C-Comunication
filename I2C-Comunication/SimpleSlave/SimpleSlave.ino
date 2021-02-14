@@ -16,22 +16,18 @@ TransfertObject transfertObject;
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);
+	Serial.println("Restart-9");
 	initWire();
 	initTransfertObject();
 }
 
 // the loop function runs over and over again until power down or reset
 void loop() {
-	
 }
 
 void initTransfertObject()
 {
-	transfertObject.offSetTemp = 324;
-	transfertObject.batteryVoltage = 3.35;
-	transfertObject.isBuzzerON = true;
 	transfertObject.batteryLevelGraf = "[||||]o";
-	transfertObject.externalTemperatureMaxValue=25;
 }
 
 void initWire() {
@@ -84,6 +80,7 @@ void receivedIncomingData()
 		index++;
 		break;
 	case 1:
+		transfertObject.isBuzzerON = atoi(data);
 		index++;
 		break;
 	case 2:

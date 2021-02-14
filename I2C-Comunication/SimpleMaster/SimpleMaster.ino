@@ -76,8 +76,6 @@ void sendDataToSlave(int address)
 
 char incomingData[10];
 
-
-
 void requestDataToSlave(int address)
 {
 	wdt_enable(WDTO_8S);
