@@ -1,81 +1,57 @@
 /*
- Name:		SimpleMaster.ino
- Created:	2/11/2021 10:48:26 AM
+ Name:		AvrBToothInterface.ino
+ Created:	2/1/2021 6:42:20 PM
  Author:	luigi.santagada
 */
+
 #include <Wire.h>
 #include <Arduino.h>
 #include <avr/wdt.h>
+#include <ActivityManager.h>
 #include "TransfertObject.h"
+
 using namespace PowerGardianSystem;
 
 TransfertObject transfertObject;
 
-const uint8_t numberOfRequestedData = 7;
+const uint8_t numberOfRequestedData = 10;
 
-// the setup function runs once when you press reset or power the board
-void setup() {
-	Serial.begin(9600);
-	Wire.begin();
+int slaveAddress01 = 4;
+char incomingData[10];
 
-	//Serial.println("ricevo");
-	requestDataToSlave(4);
-}
-
-// the loop function runs over and over again until power down or reset
-
-void loop() {
-	//Serial.println("invio");
-	//sendDataToSlave(4);
-
-	Serial.println(transfertObject.batteryLevelGraf);
-	Serial.println(transfertObject.externalTemperatureMaxValue);
-	delay(1000);
-}
 char vauleChar[10];
 String valueString = "";
 
-void sendDataToSlave(int address)
-{
-	wdt_enable(WDTO_8S);
-	Wire.beginTransmission(address);
-	Wire.write("br");
-	Wire.endTransmission();
+ActivityManager requestDataActivityManager(60);
 
-	valueString = String(transfertObject.externalTemperatureMaxValue);
-	valueString.toCharArray(vauleChar, valueString.length() + 1);
+void setup() {
 
-	Wire.beginTransmission(address);
-	Wire.write(vauleChar);
-	Wire.endTransmission();
+	Serial.begin(9600);
 
-	/*valueString = String(transfertObject.batteryLevelGraf);
-	valueString.toCharArray(vauleChar, valueString.length() + 1);
+	Wire.begin();
 
-	Wire.beginTransmission(address);
-	Wire.write(vauleChar);
-	Wire.endTransmission();
+	Serial.println("-Restart-17");
 
-	valueString = String(transfertObject.batteryLevelGraf);
-	valueString.toCharArray(vauleChar, valueString.length() + 1);
-
-	Wire.beginTransmission(address);
-	Wire.write("10.56");
-	Wire.endTransmission();
-
-	valueString = String(transfertObject.batteryLevelGraf);
-	valueString.toCharArray(vauleChar, valueString.length() + 1);
-
-	Wire.beginTransmission(address);
-	Wire.write("end");
-	Wire.endTransmission();*/
-
-	wdt_disable();
-	delay(1000);
 }
+void loop() {
 
-char incomingData[10];
+	if (requestDataActivityManager.IsDelayTimeFinished(true))
+	{
+		requestDataToSlave(4);
+	}
 
+	if (transfertObject.isDataChanged)
+	{
+		sendDataToSlave(4);
+
+		transfertObject.isDataChanged = false;
+	}
+
+	if (transfertObject.isActiveDebug)
+	{
+		//printingValues();
+	}
+}
 void requestDataToSlave(int address)
 {
 	wdt_enable(WDTO_8S);
@@ -84,9 +60,11 @@ void requestDataToSlave(int address)
 	Wire.endTransmission();
 	int cicle = 0;
 
-	while(cicle<numberOfRequestedData)
+	while (cicle <= numberOfRequestedData)
 	{
-		strcpy(incomingData, getDataFromSlave(address));
+		Wire.requestFrom(address, 10);
+
+		strcpy(incomingData, readDataFromSlave(address));
 
 		switch (cicle)
 		{
@@ -94,22 +72,34 @@ void requestDataToSlave(int address)
 			transfertObject.batteryLevelGraf = incomingData;
 			break;
 		case 1:
-			transfertObject.externalTemperatureMaxValue = atof(incomingData);
+			transfertObject.externalTemperatureMaxValue = atoi(incomingData);
 			break;
 		case 2:
-			//transfertObject.batteryLevelGraf = incomingData;
+			transfertObject.internalTemperatureMaxValue = atoi(incomingData);
 			break;
 		case 3:
-			//transfertObject.batteryLevelGraf = incomingData;
+			transfertObject.isActiveDebug = atoi(incomingData);
 			break;
 		case 4:
-			//transfertObject.batteryLevelGraf = incomingData;
+			transfertObject.isBuzzerON = atoi(incomingData);
 			break;
 		case 5:
-			//transfertObject.batteryLevelGraf = incomingData;
+			transfertObject.isExternalInterruptOn = atoi(incomingData);
 			break;
 		case 6:
-			//transfertObject.batteryLevelGraf = incomingData;
+			transfertObject.offSetTemp = atoi(incomingData);
+			break;
+		case 7:
+			transfertObject.probesNumber = atoi(incomingData);
+			break;
+		case 8:
+			transfertObject.smokeMaxLevel = atoi(incomingData);
+			break;
+		case 9:
+			transfertObject.whatIsHappened = incomingData;
+			break;
+		case 10:
+			transfertObject.internalTemperature = atof(incomingData);
 			break;
 		default:
 			break;
@@ -119,10 +109,8 @@ void requestDataToSlave(int address)
 		delay(1000);
 	}
 }
-
-char* getDataFromSlave(int address)
+char* readDataFromSlave(int address)
 {
-	Wire.requestFrom(address, 10);
 	char arrayValue[10];
 	memset(arrayValue, 0, sizeof(arrayValue));
 	uint8_t i = 0;
@@ -138,3 +126,46 @@ char* getDataFromSlave(int address)
 	//Serial.println(i);
 	return arrayValue;
 }
+void sendDataToSlave(int address)
+{
+	wdt_enable(WDTO_8S);
+	Wire.beginTransmission(address);
+	Wire.write("br");
+	Wire.endTransmission();
+
+	writeData(String(transfertObject.externalTemperatureMaxValue), 4);
+
+	writeData(String(transfertObject.isBuzzerON), 4);
+
+	writeData(String(transfertObject.internalTemperatureMaxValue), 4);
+
+	writeData(String(transfertObject.isActiveDebug), 4);
+
+	writeData(String(transfertObject.isExternalInterruptOn), 4);
+
+	writeData(String(transfertObject.isSystemActivated), 4);
+
+	writeData(String(transfertObject.offSetTemp), 4);
+
+	writeData(String(transfertObject.probesNumber), 4);
+
+	writeData(String(transfertObject.smokeMaxLevel), 4);
+
+	wdt_disable();
+	delay(1000);
+}
+void writeData(String data, int address)
+{
+	data.toCharArray(vauleChar, data.length() + 1);
+	Wire.beginTransmission(address);
+	Wire.write(vauleChar);
+	Wire.endTransmission();
+}
+
+
+
+
+
+
+
+

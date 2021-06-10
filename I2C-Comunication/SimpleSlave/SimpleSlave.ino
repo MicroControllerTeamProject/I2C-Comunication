@@ -13,10 +13,14 @@ using namespace myApplication;
 
 TransfertObject transfertObject;
 
+char data[10];
+int i = 0;
+uint8_t index = 0;
+
 // the setup function runs once when you press reset or power the board
 void setup() {
 	Serial.begin(9600);
-	Serial.println("Restart-10");
+	Serial.println("Restart-17");
 	initWire();
 	initTransfertObject();
 }
@@ -28,6 +32,7 @@ void loop() {
 void initTransfertObject()
 {
 	transfertObject.batteryLevelGraf = "[||||]o";
+	transfertObject.internalTemperature = 10.34f;
 }
 
 void initWire() {
@@ -38,10 +43,6 @@ void initWire() {
 
 	Wire.onRequest(requestEvent); // register event
 }
-
-char data[10];
-int i = 0;
-uint8_t index = 0;
 
 void receiveEvent(int howMany)
 {
@@ -68,7 +69,7 @@ void receiveEvent(int howMany)
 
 void receivedIncomingData()
 {
-	if (index > 2) {
+	if (index > 8) {
 		index = 0;
 		return;
 	}
@@ -88,19 +89,27 @@ void receivedIncomingData()
 		index++;
 		break;
 	case 3:
-		
+		transfertObject.isActiveDebug = atoi(data);
 		index++;
 		break;
 	case 4:
-		
+		transfertObject.isExternalInterruptOn = atoi(data);
 		index++;
 		break;
 	case 5:
-		
+		transfertObject.isSystemActivated = atoi(data);
 		index++;
 		break;
 	case 6:
-
+		transfertObject.offSetTemp = atoi(data);
+		index++;
+		break;
+	case 7:
+		transfertObject.probesNumber = atoi(data);
+		index++;
+		break;
+	case 8:
+		transfertObject.smokeMaxLevel = atoi(data);
 		index++;
 		break;
 	default:
@@ -110,7 +119,7 @@ void receivedIncomingData()
 
 void requestEvent()
 {
-	if (index > 6) {
+	if (index > 10) {
 		index = 0;
 		return;
 	}
@@ -126,11 +135,11 @@ void requestEvent()
 		index++;
 		break;
 	case 2:
-		sendValueToMaster(String(transfertObject.internalTemperature));
+		sendValueToMaster(String(transfertObject.internalTemperatureMaxValue));
 		index++;
 		break;
 	case 3:
-		sendValueToMaster(String(transfertObject.internalTemperatureMaxValue));
+		sendValueToMaster(String(transfertObject.isActiveDebug));
 		index++;
 		break;
 	case 4:
@@ -143,6 +152,22 @@ void requestEvent()
 		break;
 	case 6:
 		sendValueToMaster(String(transfertObject.offSetTemp));
+		index++;
+		break;
+	case 7:
+		sendValueToMaster(String(transfertObject.probesNumber));
+		index++;
+		break;
+	case 8:
+		sendValueToMaster(String(transfertObject.smokeMaxLevel));
+		index++;
+		break;
+	case 9:
+		sendValueToMaster(String(transfertObject.whatIsHappened));
+		index++;
+		break;
+	case 10:
+		sendValueToMaster(String(transfertObject.internalTemperature));
 		index++;
 		break;
 	default:
